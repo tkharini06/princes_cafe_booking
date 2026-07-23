@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Princes Cafe | Reserve a Table</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maroon:#6A1B1A;
+    --maroon-dark:#4E1211;
+    --gold:#D4AF37;
+    --gold-light:#E8CB6E;
+    --cream:#FFF8F0;
+    --cream-deep:#F7EEDF;
+    --text:#3E2723;
+    --error:#B3261E;
+    --radius:16px;
+    --shadow:0 20px 45px rgba(106,27,26,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(212,175,55,0.10), transparent 40%),
+      radial-gradient(circle at 90% 85%, rgba(106,27,26,0.06), transparent 45%),
+      var(--cream);
+    font-family:'Poppins', sans-serif;
+    color:var(--text);
+    min-height:100vh;
+    padding:48px 16px 64px;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+
+  .brand{text-align:center;margin-bottom:36px;}
+  .brand .crest{
+    width:56px;height:56px;margin:0 auto 14px;
+    border:2px solid var(--gold);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--maroon);
+    background:var(--cream);
+  }
+  .brand h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:44px;
+    margin:0;
+    color:var(--maroon);
+    letter-spacing:0.5px;
+  }
+  .brand p{
+    margin:8px 0 0;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    font-size:11px;
+    color:var(--gold);
+    font-weight:500;
+  }
+
+  .card{
+    background:#fff;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    border:1px solid rgba(212,175,55,0.25);
+    padding:40px 36px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;top:0;left:0;right:0;height:5px;
+    background:linear-gradient(90deg, var(--maroon), var(--gold), var(--maroon));
+  }
+
+  .section-title{
+    font-family:'Cormorant Garamond',serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--maroon);
+    margin:0 0 18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .section-title::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, rgba(212,175,55,0.5), transparent);
+  }
+  .section{margin-bottom:32px;}
+  .section:last-of-type{margin-bottom:0;}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .grid.three{grid-template-columns:1fr 1fr 1fr;}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
+  .field.full{grid-column:1 / -1;}
+  label{font-size:13px;font-weight:500;color:var(--text);}
+  label .req{color:var(--maroon);}
+
+  input[type="text"],input[type="tel"],input[type="email"],input[type="date"],input[type="time"],input[type="number"],select,textarea{
+    font-family:'Poppins',sans-serif;
+    font-size:14.5px;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1.5px solid #E7DCC8;
+    background:var(--cream-deep);
+    color:var(--text);
+    outline:none;
+    transition:border-color .2s, box-shadow .2s;
+    width:100%;
+  }
+  textarea{resize:vertical;min-height:100px;font-family:'Poppins',sans-serif;}
+  input:focus,select:focus,textarea:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(212,175,55,0.22);
+    background:#fff;
+  }
+  input.invalid,select.invalid,textarea.invalid{
+    border-color:var(--error);
+    background:#FDF2F1;
+  }
+  .error-msg{font-size:12px;color:var(--error);min-height:14px;}
+  .form-error{font-size:13px;color:var(--error);text-align:center;min-height:16px;margin-bottom:6px;}
+
+  .seating-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .seat-option{
+    border:1.5px solid #E7DCC8;
+    border-radius:12px;
+    padding:14px 10px;
+    text-align:center;
+    cursor:pointer;
+    background:var(--cream-deep);
+    transition:all .2s;
+    font-size:13.5px;
+    font-weight:500;
+    position:relative;
+  }
+  .seat-option input{position:absolute;opacity:0;pointer-events:none;}
+  .seat-option .ic{font-size:20px;display:block;margin-bottom:6px;}
+  .seat-option:hover{border-color:var(--gold);}
+  .seat-option.selected{
+    border-color:var(--maroon);
+    background:linear-gradient(135deg, rgba(106,27,26,0.06), rgba(212,175,55,0.10));
+    color:var(--maroon);
+    box-shadow:0 4px 12px rgba(106,27,26,0.12);
+  }
+
+  .actions{display:flex;gap:14px;margin-top:12px;}
+  button{
+    font-family:'Poppins',sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    padding:15px 22px;
+    border-radius:10px;
+    cursor:pointer;
+    border:none;
+    transition:transform .15s, box-shadow .2s, background .2s, opacity .2s;
+    letter-spacing:0.3px;
+  }
+  .btn-primary{
+    flex:2;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    color:var(--maroon-dark);
+    box-shadow:0 10px 24px rgba(212,175,55,0.35);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(212,175,55,0.45);}
+  .btn-primary:active{transform:translateY(0);}
+  .btn-primary:disabled{opacity:0.65;cursor:not-allowed;transform:none;}
+  .btn-secondary{
+    flex:1;
+    background:transparent;
+    color:var(--maroon);
+    border:1.5px solid var(--maroon);
+  }
+  .btn-secondary:hover{background:rgba(106,27,26,0.06);}
+
+  .hint{font-size:11.5px;color:#8a7a6d;margin-top:4px;}
+
+  .confirm{display:none;text-align:center;padding:20px 10px 10px;}
+  .confirm.show{display:block;}
+  .form-inner.hidden{display:none;}
+  .check{
+    width:64px;height:64px;border-radius:50%;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    color:var(--maroon-dark);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 18px;font-size:32px;
+    box-shadow:0 10px 24px rgba(212,175,55,0.4);
+    animation:pop .4s ease;
+  }
+  @keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.1);}100%{transform:scale(1);}}
+  .confirm h2{font-family:'Cormorant Garamond',serif;color:var(--maroon);font-size:30px;margin:0 0 6px;}
+  .confirm p.sub{color:#8a7a6d;margin:0 0 26px;font-size:14px;}
+  .receipt{
+    background:var(--cream-deep);
+    border:1.5px dashed var(--gold);
+    border-radius:12px;
+    padding:22px 26px;
+    text-align:left;
+    max-width:400px;
+    margin:0 auto 26px;
+  }
+  .receipt-row{display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px solid rgba(212,175,55,0.25);}
+  .receipt-row:last-child{border-bottom:none;}
+  .receipt-row span:first-child{color:#8a7a6d;}
+  .receipt-row span:last-child{font-weight:600;color:var(--text);}
+  .receipt-row.id span:last-child{color:var(--maroon);font-family:'Cormorant Garamond',serif;font-size:17px;}
+
+  footer{text-align:center;margin-top:28px;font-size:12px;color:#a2917f;}
+
+  @media (max-width:600px){
+    .grid,.grid.three{grid-template-columns:1fr;}
+    .seating-grid{grid-template-columns:1fr 1fr;}
+    .card{padding:28px 20px;}
+    .brand h1{font-size:34px;}
+    .actions{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="crest">PC</div>
+    <h1>Princes Cafe</h1>
+    <p>Table Reservation</p>
+  </div>
+
+  <div class="card">
+
+    <form class="form-inner" id="bookingForm" novalidate>
+
+      <div class="section">
+        <h3 class="section-title">Customer information</h3>
+        <div class="grid">
+          <div class="field full">
+            <label for="fullName">Full name <span class="req">*</span></label>
+            <input type="text" id="fullName" placeholder="e.g. Arjun Menon">
+            <div class="error-msg" id="err-fullName"></div>
+          </div>
+          <div class="field">
+            <label for="phone">Mobile number <span class="req">*</span></label>
+            <input type="tel" id="phone" placeholder="10-digit mobile number" maxlength="10">
+            <div class="error-msg" id="err-phone"></div>
+          </div>
+          <div class="field">
+            <label for="email">Email address <span class="req">*</span></label>
+            <input type="email" id="email" placeholder="name@example.com">
+            <div class="error-msg" id="err-email"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Booking details</h3>
+        <div class="grid three">
+          <div class="field">
+            <label for="date">Booking date <span class="req">*</span></label>
+            <input type="date" id="date">
+            <div class="error-msg" id="err-date"></div>
+          </div>
+          <div class="field">
+            <label for="time">Booking time <span class="req">*</span></label>
+            <input type="time" id="time" min="11:00" max="23:00" step="60">
+            <div class="hint">Open 11:00 AM &ndash; 11:00 PM</div>
+            <div class="error-msg" id="err-time"></div>
+          </div>
+          <div class="field">
+            <label for="guests">Number of guests <span class="req">*</span></label>
+            <input type="number" id="guests" min="1" max="30" placeholder="1–30">
+            <div class="error-msg" id="err-guests"></div>
+          </div>
+        </div>
+        <div class="field full">
+          <label for="occasion">Occasion</label>
+          <select id="occasion">
+            <option value="">Select an occasion (optional)</option>
+            <option>Birthday</option>
+            <option>Anniversary</option>
+            <option>Family Dinner</option>
+            <option>Corporate Meeting</option>
+            <option>Friends Gathering</option>
+            <option>Romantic Dinner</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Seating preference</h3>
+        <div class="seating-grid" id="seatingGrid">
+          <label class="seat-option" data-value="Indoor"><input type="radio" name="seating" value="Indoor"><span class="ic">&#8962;</span>Indoor</label>
+          <label class="seat-option" data-value="Outdoor"><input type="radio" name="seating" value="Outdoor"><span class="ic">&#9728;</span>Outdoor</label>
+          <label class="seat-option" data-value="Rooftop"><input type="radio" name="seating" value="Rooftop"><span class="ic">&#9733;</span>Rooftop</label>
+          <label class="seat-option" data-value="Window Seat"><input type="radio" name="seating" value="Window Seat"><span class="ic">&#9974;</span>Window Seat</label>
+        </div>
+        <div class="error-msg" id="err-seating"></div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Special requests</h3>
+        <div class="field full">
+          <textarea id="requests" placeholder="Enter decoration requests, food preferences, allergies, etc."></textarea>
+        </div>
+      </div>
+
+      <div class="form-error" id="formError"></div>
+
+      <div class="actions">
+        <button type="submit" class="btn-primary" id="submitBtn">Reserve Table</button>
+        <button type="button" class="btn-secondary" id="resetBtn">Reset Form</button>
+      </div>
+    </form>
+
+    <div class="confirm" id="confirmPanel">
+      <div class="check">&#10003;</div>
+      <h2>Booking Confirmed</h2>
+      <p class="sub">A confirmation has been sent to your email and mobile number.</p>
+      <div class="receipt">
+        <div class="receipt-row id"><span>Booking ID</span><span id="c-id"></span></div>
+        <div class="receipt-row"><span>Customer name</span><span id="c-name"></span></div>
+        <div class="receipt-row"><span>Date</span><span id="c-date"></span></div>
+        <div class="receipt-row"><span>Time</span><span id="c-time"></span></div>
+        <div class="receipt-row"><span>Guests</span><span id="c-guests"></span></div>
+      </div>
+      <button type="button" class="btn-secondary" id="newBookingBtn" style="width:auto;padding:12px 26px;">Make another booking</button>
+    </div>
+
+  </div>
+
+  <footer>Princes Cafe &middot; Reservations open daily, 11:00 AM &ndash; 11:00 PM</footer>
+</div>
+
+<script>
+  // Point this at your running backend (see /server in this download).
+  // Locally that's http://localhost:5000/api ; after deploying, swap in
+  // your live URL, e.g. https://princes-cafe-api.onrender.com/api
+  const API_BASE_URL = "http://localhost:5000/api";
+
+  const form = document.getElementById('bookingForm');
+  const seatingGrid = document.getElementById('seatingGrid');
+  const confirmPanel = document.getElementById('confirmPanel');
+  const submitBtn = document.getElementById('submitBtn');
+  const formErrorEl = document.getElementById('formError');
+
+  const dateInput = document.getElementById('date');
+  const timeInput = document.getElementById('time');
+
+  const OPEN_MINUTES = 11 * 60;   // 11:00 AM
+  const CLOSE_MINUTES = 23 * 60;  // 11:00 PM
+
+  // Constrain the native pickers so an out-of-range value (like the
+  // 5:10 AM that previously slipped through) can't be selected at all.
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.min = today;
+  timeInput.min = '11:00';
+  timeInput.max = '23:00';
+  timeInput.step = 60;
+
+  seatingGrid.addEventListener('click', (e) => {
+    const opt = e.target.closest('.seat-option');
+    if (!opt) return;
+    seatingGrid.querySelectorAll('.seat-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    opt.querySelector('input').checked = true;
+    clearError('seating');
+  });
+
+  function setError(field, msg) {
+    const el = document.getElementById('err-' + field);
+    const input = document.getElementById(field);
+    if (el) el.textContent = msg;
+    if (input) input.classList.toggle('invalid', !!msg);
+  }
+  function clearError(field) {
+    setError(field, '');
+  }
+
+  function minutesFromTimeString(t) {
+    const [h, m] = t.split(':').map(Number);
+    if (Number.isNaN(h) || Number.isNaN(m)) return null;
+    return h * 60 + m;
+  }
+
+  function validate() {
+    let valid = true;
+
+    const fullName = document.getElementById('fullName').value.trim();
+    if (!fullName) { setError('fullName', 'Full name is required.'); valid = false; }
+    else if (!/^[A-Za-z\s.'-]{2,}$/.test(fullName)) { setError('fullName', 'Name should contain only letters.'); valid = false; }
+    else clearError('fullName');
+
+    const phone = document.getElementById('phone').value.trim();
+    if (!phone) { setError('phone', 'Mobile number is required.'); valid = false; }
+    else if (!/^\d{10}$/.test(phone)) { setError('phone', 'Enter a valid 10-digit mobile number.'); valid = false; }
+    else clearError('phone');
+
+    const email = document.getElementById('email').value.trim();
+    if (!email) { setError('email', 'Email address is required.'); valid = false; }
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('email', 'Enter a valid email address.'); valid = false; }
+    else clearError('email');
+
+    const date = dateInput.value;
+    if (!date) { setError('date', 'Booking date is required.'); valid = false; }
+    else if (date < today) { setError('date', 'Booking date cannot be in the past.'); valid = false; }
+    else clearError('date');
+
+    const time = timeInput.value;
+    if (!time) { setError('time', 'Booking time is required.'); valid = false; }
+    else {
+      const minutes = minutesFromTimeString(time);
+      if (minutes === null || minutes < OPEN_MINUTES || minutes > CLOSE_MINUTES) {
+        setError('time', 'Please choose a time between 11:00 AM and 11:00 PM.');
+        valid = false;
+      } else {
+        clearError('time');
+      }
+    }
+
+    const guests = document.getElementById('guests').value;
+    if (!guests) { setError('guests', 'Number of guests is required.'); valid = false; }
+    else if (guests < 1 || guests > 30) { setError('guests', 'Guests must be between 1 and 30.'); valid = false; }
+    else clearError('guests');
+
+    const seating = form.querySelector('input[name="seating"]:checked');
+    if (!seating) { setError('seating', 'Please select a seating preference.'); valid = false; }
+    else clearError('seating');
+
+    return valid;
+  }
+
+  function formatTime12h(t) {
+    const [h, m] = t.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+  }
+
+  function formatDateLong(d) {
+    const dt = new Date(d + 'T00:00:00');
+    return dt.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  function showConfirmation(booking) {
+    document.getElementById('c-id').textContent = booking.bookingId;
+    document.getElementById('c-name').textContent = booking.customerName;
+    document.getElementById('c-date').textContent = formatDateLong(booking.bookingDate);
+    document.getElementById('c-time').textContent = formatTime12h(booking.bookingTime);
+    document.getElementById('c-guests').textContent = booking.guestCount + (booking.guestCount == 1 ? ' guest' : ' guests');
+
+    form.classList.add('hidden');
+    confirmPanel.classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formErrorEl.textContent = '';
+
+    if (!validate()) {
+      const firstError = form.querySelector('.invalid, .error-msg:not(:empty)');
+      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const payload = {
+      customerName: document.getElementById('fullName').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      bookingDate: dateInput.value,
+      bookingTime: timeInput.value,
+      guestCount: Number(document.getElementById('guests').value),
+      occasion: document.getElementById('occasion').value || null,
+      seatingPreference: form.querySelector('input[name="seating"]:checked').value,
+      specialRequest: document.getElementById('requests').value.trim() || null
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Reserving...';
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/booking`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        formErrorEl.textContent = data.message || 'Something went wrong. Please try again.';
+        return;
+      }
+
+      showConfirmation(data.booking);
+    } catch (err) {
+      formErrorEl.textContent = 'Could not reach the server. Please check your connection and try again.';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Reserve Table';
+    }
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    form.reset();
+    seatingGrid.querySelectorAll('.seat-option').forEach(o => o.classList.remove('selected'));
+    ['fullName', 'phone', 'email', 'date', 'time', 'guests', 'seating'].forEach(clearError);
+    formErrorEl.textContent = '';
+  });
+
+  document.getElementById('newBookingBtn').addEventListener('click', () => {
+    form.reset();
+    seatingGrid.querySelectorAll('.seat-option').forEach(o => o.classList.remove('selected'));
+    ['fullName', 'phone', 'email', 'date', 'time', 'guests', 'seating'].forEach(clearError);
+    confirmPanel.classList.remove('show');
+    form.classList.remove('hidden');
+  });
+</script>
+</body>
+</html>
